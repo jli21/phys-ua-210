@@ -1,0 +1,35 @@
+import numpy as np
+
+def line_sum(i, j, k): 
+    return (abs(i**2 + j**2 + k**2))**0.5
+
+def madelung_constant_0(L):
+    total = 0.0
+    
+    for i in range(-L, L+1):
+        for j in range(-L, L+1):
+            for k in range(-L, L+1):
+                if i == j == k == 0:
+                    continue
+                else:
+                    sign = (1) if (i + j + k) % 2 else -1
+                    total += sign / line_sum(i, j ,k)
+                    
+    return total
+
+def madelung_constant_1(L):
+    i, j, k = np.mgrid[-L:L+1, -L:L+1, -L:L+1]
+    mask = ~((i == 0) & (j == 0) & (k == 0))
+    
+    values = np.where((i + j + k) % 2 == 0, -1, 1) / line_sum(i, j ,k)
+    total = np.sum(values[mask])
+    
+    return total
+
+L = 100
+
+%timeit -r 5 -n 100 M0 = madelung_constant_0(L)
+%timeit -r 5 -n 100 M1 = madelung_constant_1(L)
+
+print(f"The Madelung constant for L = {L} using madelung_constant_0 is approximately: {M0:.10f}")
+print(f"The Madelung constant for L = {L} using madelung_constant_1 is approximately: {M1:.10f}")
