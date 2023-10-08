@@ -48,7 +48,7 @@ def integrand(x, n):
 def uncertainty(n):
     res, _ = quad(integrand, -np.inf, np.inf, args=(n))
     return sqrt(res)
-print(f"The uncertainty for n = 5 using Gauss-Hermite quadrature and H_n is approximately {uncertainty(5)}")
+print(f"The uncertainty for n = 5 using quadrature and H_n is approximately {uncertainty(5)}")
 
 def uncertainty_gauss_hermite_H(n, num_points=100):
     nodes, weights = np.polynomial.hermite.hermgauss(num_points)
