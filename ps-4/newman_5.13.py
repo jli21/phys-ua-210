@@ -48,11 +48,14 @@ def integrand(x, n):
 def uncertainty(n):
     res, _ = quad(integrand, -np.inf, np.inf, args=(n))
     return sqrt(res)
+print(f"The uncertainty for n = 5 using Gauss-Hermite quadrature and H_n is approximately {uncertainty(5)}")
 
-def uncertainty_gauss_hermite(n, num_points=1000):
+def uncertainty_gauss_hermite_H(n, num_points=100):
     nodes, weights = np.polynomial.hermite.hermgauss(num_points)
-    integral = sum(weights[i] * (nodes[i]**2) * abs(psi(n, nodes[i]))**2 for i in range(num_points))
+
+    integral = sum(weights[i] * (nodes[i]**2) * H(n, nodes[i])**2 for i in range(num_points))
+    integral *= 1/(2**n * factorial(n) * np.sqrt(np.pi))
     return sqrt(integral)
 
-result_gh = uncertainty_gauss_hermite(5)
-print(f"The uncertainty for n = 5 using Gauss-Hermite quadrature is approximately {result_gh:.2f}")
+res = uncertainty_gauss_hermite_H(5)
+print(f"The uncertainty for n = 5 using Gauss-Hermite quadrature and H_n is approximately {res}")
