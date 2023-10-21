@@ -4,8 +4,8 @@ import pandas as pd
 
 df = pd.read_csv('ps-5/signal.dat', delimiter = "|")
 
-time = df[df.columns[1]]
-signal = df[df.columns[2]]
+time = df[df.columns[1]].to_numpy()
+signal = df[df.columns[2]].to_numpy()
 
 plt.figure(figsize=(10, 6))
 plt.scatter(time, signal, color='blue', s=20)
@@ -83,3 +83,32 @@ for order in orders:
     condition_numbers.append(cond_num)
 
 condition_numbers
+
+def fourier_design_matrix(x, max_harmonic):
+
+    n = len(x)
+    T = (x[-1] - x[0]) / 2
+    A = np.ones((n, 2*max_harmonic + 1))
+    for k in range(1, max_harmonic + 1):
+        A[:, 2*k - 1] = np.sin(2 * np.pi * k * x / T)
+        A[:, 2*k] = np.cos(2 * np.pi * k * x / T)
+    
+    return A
+
+max_harmonic = 5
+A_fourier = fourier_design_matrix(time, max_harmonic)
+coefficients_fourier = np.linalg.lstsq(A_fourier, signal, rcond=None)[0]
+fit_values_fourier = A_fourier @ coefficients_fourier
+
+plt.figure(figsize=(10, 6))
+plt.scatter(time, signal, color='blue', s=20, label="Data Points")
+plt.scatter(time, fit_values_fourier, color='green', s=20, label=f"Fourier Fit (up to {max_harmonic} harmonics)")
+plt.title('Signal vs Time with Fourier Fit')
+plt.xlabel('Time')
+plt.ylabel('Signal')
+plt.legend()
+plt.grid(True)
+plt.tight_layout()
+plt.show()
+
+coefficients_fourier
