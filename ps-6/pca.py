@@ -75,9 +75,9 @@ print("Condition number of C:", cond_C)
 print("Condition number of R:", cond_R)
 
 # PART F
-coefficients = np.dot(residuals, eigenvectors_svd[:, :5])
-approx_spectra = np.dot(coefficients, eigenvectors[:, :Nc].T) + mean_spectrum
-approx_spectra.shape
+n = 5
+coefficients = np.dot(residuals, eigenvectors_svd[:, :n])
+approx_spectra = np.dot(coefficients, eigenvectors_svd[:, :n].T) + mean_spectrum
 
 # PART H
 c_0 = coefficients[:, 0]  
@@ -87,51 +87,39 @@ c_2 = coefficients[:, 2]
 # Plot c_0 vs c_1
 plt.figure(figsize=(10, 8))
 plt.scatter(c_0, c_1, alpha=0.5)
-plt.xlabel('c_0 (First Principal Component)')
-plt.ylabel('c_1 (Second Principal Component)')
-plt.title('Plot of c_0 vs c_1')
+plt.xlabel('$c_0$ (First Principal Component)')
+plt.ylabel('$c_1$ (Second Principal Component)')
 plt.grid(True)
 plt.show()
 
 # Plot c_0 vs c_2
 plt.figure(figsize=(10, 8))
 plt.scatter(c_0, c_2, alpha=0.5)
-plt.xlabel('c_0 (First Principal Component)')
-plt.ylabel('c_2 (Third Principal Component)')
-plt.title('Plot of c_0 vs c_2')
+plt.xlabel('$c_0$ (First Principal Component)')
+plt.ylabel('$c_2$ (Third Principal Component)')
 plt.grid(True)
 plt.show()
 
 # PART I
-squared_fractional_residuals = []
+sq_frac_residuals = []
 for Nc in range(1, 21):
-    # Take the first Nc components
-    coefficients_Nc = coefficients[:, :Nc]
-    eigenvectors_Nc = eigenvectors[:, :Nc]
+    coefficients_Nc = np.dot(residuals, eigenvectors_svd[:, :Nc])
+    approx_spectra_Nc = np.dot(coefficients_Nc, eigenvectors_svd[:, :Nc].T) + mean_spectrum
 
-    # Reconstruct the spectra
-    reconstructed_spectra = np.dot(coefficients_Nc, eigenvectors_Nc.T) + mean_spectrum
-
-    # Calculate the residuals
-    residuals = normalized_flux - reconstructed_spectra
-
-    # Compute the squared fractional residuals
-    squared_residuals = np.square(residuals)
-    squared_norm_flux = np.square(normalized_flux)
-    squared_fractional_residual = np.sum(squared_residuals, axis=1) / np.sum(squared_norm_flux, axis=1)
-    mean_squared_fractional_residual = np.mean(squared_fractional_residual)
+    residuals_Nc = normalized_flux - approx_spectra_Nc
+    sq_residuals_Nc = np.square(residuals_Nc)
+    sq_norm_flux = np.square(normalized_flux)
     
-    squared_fractional_residuals.append(mean_squared_fractional_residual)
+    sq_frac_residual_Nc = np.sum(sq_residuals_Nc, axis=1) / np.sum(sq_norm_flux, axis=1)
+    mean_sq_frac_residual_Nc = np.mean(sq_frac_residual_Nc)
+    
+    sq_frac_residuals.append(mean_sq_frac_residual_Nc)
 
-# Plot the squared fractional residuals as a function of Nc
-plt.plot(range(1, 21), squared_fractional_residuals, marker='o')
+plt.plot(range(1, 21), sq_frac_residuals, marker='o')
 plt.xlabel('Number of Components (Nc)')
 plt.ylabel('Mean Squared Fractional Residuals')
-plt.title('Squared Fractional Residuals vs Number of Components')
 plt.grid(True)
 plt.show()
 
-# Print the fractional error for Nc = 20
-fractional_error_Nc_20 = squared_fractional_residuals[-1]
-print(f"The fractional error for Nc = 20 is {fractional_error_Nc_20:.4f}")
-
+frac_error_Nc_20 = sq_frac_residuals[-1]
+print(f"The fractional error for Nc = 20 is {frac_error_Nc_20}")
