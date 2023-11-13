@@ -20,7 +20,7 @@ def gradient(beta, x, y):
     p = logistic_function(beta, x)
     return np.array([np.sum((p - y)), np.sum((p - y) * x)])
 
-def hessian_np(beta, x, y):
+def hessian(beta, x, y):
     p = logistic_function(beta, x)
     dp = p * (1 - p)  
     h00 = np.sum(dp)
@@ -35,15 +35,15 @@ result = minimize(fun=neg_log_likelihood,
                      jac=gradient)
 
 if result.success:
-    estimated_beta = result.x
-    covariance_matrix = np.linalg.inv(hessian_np(estimated_beta, data['age'], data['recognized_it']))
+    est_beta = result.x
+    cov_matrix = np.linalg.inv(hessian(est_beta, data['age'], data['recognized_it']))
 else:
-    estimated_beta = None
-    covariance_matrix = None
+    est_beta = None
+    cov_matrix = None
 
 plt.scatter(data['age'], data['recognized_it'], alpha=0.5, label='Survey Data')
 ages = np.linspace(data['age'].min(), data['age'].max(), 300)
-probabilities = logistic_function(estimated_beta, ages)
+probabilities = logistic_function(est_beta, ages)
 plt.plot(ages, probabilities, label='Logistic Regression', color='red')
 plt.xlabel('Age')
 plt.ylabel('Probability of Recognition')
@@ -52,4 +52,4 @@ plt.grid(True)
 
 plt.show()
 
-estimated_beta, covariance_matrix, result.fun
+est_beta, cov_matrix, result.fun
