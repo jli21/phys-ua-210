@@ -31,7 +31,7 @@ plt.show()
 
 # TODO: PART B
 plt.figure(figsize=(10, 6))
-plt.plot(x, z, label='z(x)', color='green')
+plt.plot(x, z, label='z(x)', color='red')
 plt.title('Lorenz System: z as a Function of x (Strange Attractor)')
 plt.xlabel('x')
 plt.ylabel('z')

@@ -22,7 +22,6 @@ def plot_waveform_fft(waveform, title):
     ax[0].set_title(f"{title} Waveform")
     ax[0].set_xlabel("Time (seconds)")
     ax[0].set_ylabel("Amplitude")
-
   
     ax[1].plot(freq, magnitudes)
     ax[1].set_title(f"{title} Fourier Transform")
